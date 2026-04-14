@@ -62,11 +62,10 @@ from langchain.chat_models import init_chat_model
 
 #     return handler(request.override(tools=filtered))
 
-def _memories_namespace(ctx):
+def _memories_namespace(rt):
     """Use assistant_id as the namespace to isolate each assistant's memories."""
-    assistant_id = ctx.runtime.config.get("metadata", {}).get("assistant_id")
-    if assistant_id:
-        return (assistant_id,)
+    if rt.server_info is not None and rt.server_info.assistant_id:
+        return (rt.server_info.assistant_id,)
     return ("default-agent",)
 
 
@@ -80,9 +79,9 @@ async def make_graph(runtime: Runtime[Context]):
 
     # Route /memories/ to the persistent LangGraph store; everything else stays ephemeral.
     # The namespace factory must return (assistant_id,) to match what was stored via the SDK.
-    backend = lambda rt: CompositeBackend(
-        default=StateBackend(rt),
-        routes={"/memories/": StoreBackend(rt, namespace=_memories_namespace)},
+    backend = CompositeBackend(
+        default=StateBackend(),
+        routes={"/memories/": StoreBackend(namespace=_memories_namespace)},
     )
 
     graph = create_deep_agent(
