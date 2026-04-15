@@ -14,7 +14,10 @@ from typing import Callable, Optional, cast, Any
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_community.tools.yahoo_finance_news import YahooFinanceNewsTool
 from langchain_core.tools import tool
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from datetime import datetime
+
+LANGCHAIN_DOCS_MCP_URL = "https://docs.langchain.com/mcp"
 
 @tool
 async def finance_research(ticker_symbol: str) -> Optional[list[dict[str, Any]]]:
@@ -70,6 +73,34 @@ async def get_todays_date() -> str:
     return datetime.now().strftime("%Y-%m-%d")
 
 
+@tool
+async def langchain_docs(query: str) -> str:
+    """Search the LangChain documentation for information about LangChain, LangGraph,
+    LangSmith, Deep Agents, and related libraries. Use this tool when you need accurate,
+    up-to-date information about LangChain APIs, concepts, or usage patterns.
+
+    Args:
+        query (str): The question or topic to search for in the LangChain documentation.
+    """
+    client = MultiServerMCPClient(
+        {
+            "langchain-docs": {
+                "transport": "http",
+                "url": LANGCHAIN_DOCS_MCP_URL,
+            }
+        }
+    )
+    tools = await client.get_tools()
+    search_tool = next(
+        (t for t in tools if "search" in t.name.lower()),
+        tools[0] if tools else None,
+    )
+    if search_tool is None:
+        return "LangChain docs MCP server returned no tools."
+    result = await search_tool.ainvoke({"query": query})
+    return str(result)
+
+
 def get_tools(selected_tools: list[str]) -> list[Callable[..., Any]]:
     """Convert a list of tool names to actual tool functions."""
     tools = []
@@ -82,5 +113,7 @@ def get_tools(selected_tools: list[str]) -> list[Callable[..., Any]]:
             tools.append(basic_research)
         elif tool == "get_todays_date":
             tools.append(get_todays_date)
-    
+        elif tool == "langchain_docs":
+            tools.append(langchain_docs)
+
     return tools

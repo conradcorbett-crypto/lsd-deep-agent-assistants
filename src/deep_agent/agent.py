@@ -27,41 +27,6 @@ from langgraph.runtime import Runtime
 from langchain.chat_models import init_chat_model
 
 
-# # All available custom tool names — used to distinguish from deep agent built-ins
-# CUSTOM_TOOL_NAMES = {"finance_research", "advanced_research", "basic_research", "get_todays_date"}
-
-# # Model
-# model = init_chat_model(model="anthropic:claude-haiku-4-5")
-
-
-# @dynamic_prompt
-# def context_system_prompt(request: ModelRequest) -> str:
-#     """Inject the assistant's system prompt from context."""
-#     ctx = request.runtime.context or Context()
-#     return ctx.system_prompt
-
-
-# @wrap_model_call
-# def filter_tools_by_context(
-#     request: ModelRequest,
-#     handler: Callable[[ModelRequest], ModelResponse],
-# ) -> ModelResponse:
-#     """Only pass the tools selected for this assistant to the model.
-
-#     Deep agent built-in tools (write_todos, filesystem, etc.) are always kept.
-#     Custom tools are filtered to only those in selected_tools.
-#     """
-#     ctx = request.runtime.context or Context()
-#     selected = set(ctx.selected_tools)
-
-#     filtered = [
-#         t for t in request.tools
-#         if not (hasattr(t, "name") and t.name in CUSTOM_TOOL_NAMES)
-#         or (hasattr(t, "name") and t.name in selected)
-#     ]
-
-#     return handler(request.override(tools=filtered))
-
 def _memories_namespace(rt):
     """Use assistant_id as the namespace to isolate each assistant's memories."""
     if rt.server_info is not None and rt.server_info.assistant_id:
