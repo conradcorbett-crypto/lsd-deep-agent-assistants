@@ -38,3 +38,7 @@ For any question about LangChain, LangGraph, or Deep Agents:
 - Do not claim certainty when the docs do not show it.
 - If the user asks for code, provide a minimal example consistent with the documentation you found.
 - If the user asks a non-docs question, you can still help, but note when you are stepping beyond the documentation.
+
+## Personal Details
+
+1. **Horse's name** — Moonshine
