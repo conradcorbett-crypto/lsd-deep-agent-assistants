@@ -20,11 +20,12 @@ from langchain.agents.middleware import (
 )
 from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
+from pymongo import MongoClient
+from langgraph.checkpoint.mongodb import MongoDBSaver
 
 from deep_agent.context import Context
 from deep_agent.tools import get_tools
 from langgraph.runtime import Runtime
-from langchain.chat_models import init_chat_model
 
 
 async def make_graph(runtime: Runtime[Context]):
