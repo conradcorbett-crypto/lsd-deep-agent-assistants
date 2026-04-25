@@ -1,7 +1,6 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "agent": "./src/deep_research/agent.py:agent",
     "deep_agent": "./src/deep_agent/agent.py:make_graph"
   },
   "checkpointer": {
